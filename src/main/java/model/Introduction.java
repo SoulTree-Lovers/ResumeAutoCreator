@@ -3,8 +3,8 @@ package model;
 public class Introduction {
     private String introduction; // 자기소개서
 
-    public Introduction(String introduction) {
-        this.introduction = introduction;
+    public Introduction() {
+        this.introduction = "";
     }
 
     @Override
