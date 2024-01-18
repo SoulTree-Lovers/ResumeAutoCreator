@@ -1,8 +1,16 @@
 package controller;
 
 import com.itextpdf.io.image.ImageData;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import javax.imageio.ImageIO;
 import model.Career;
 import model.Education;
 import model.Introduction;
@@ -11,6 +19,11 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import view.ResumeView;
 
@@ -45,7 +58,45 @@ public class ResumeController {
 
             // 개인정보 데이터 생성
             Row personInfoRow = sheet.createRow(row);
-            personInfoRow.createCell(0).setCellValue(personInfo.getPhoto());
+//            personInfoRow.createCell(0).setCellValue(personInfo.getPhoto());
+            String photoFilename = personInfo.getPhoto();
+            try (InputStream photoStream = new FileInputStream(photoFilename)) {
+                // 사진 파일을 읽어들입니다.
+                BufferedImage originalImage = ImageIO.read(photoStream);
+
+                // 증명사진 크기로 이미지를 조절합니다. (가로 35mm, 세로 45mm)
+                int newWidth = (int) (35 * 2.83465); // mm 단위를 픽셀 단위로 변환합니다 (1mm = 2.83465px).
+                int newHeight = (int) (45 * 2.83465); // mm 단위를 픽셀 단위로 변환합니다 (1mm = 2.83465px).
+                Image resizedImage = originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+                BufferedImage resizedBufferedImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_4BYTE_ABGR);
+                Graphics2D g2d = resizedBufferedImage.createGraphics();
+                g2d.drawImage(resizedImage, 0, 0, null);
+                g2d.dispose();
+
+                // 조절된 이미지를 바이트 배열로 변환합니다.
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write(resizedBufferedImage, "png", baos);
+                byte[] imageBytes = baos.toByteArray();
+                int imageIndex = workbook.addPicture(imageBytes, Workbook.PICTURE_TYPE_PNG);
+
+                // Drawing 객체를 생성하고 이미지를 삽입합니다.
+                XSSFDrawing drawing = (XSSFDrawing) sheet.createDrawingPatriarch();
+                XSSFClientAnchor anchor = new XSSFClientAnchor(0, 0, 0, 0, 0, 1, 1, 2);
+                drawing.createPicture(anchor, imageIndex);
+
+                // 이미지가 삽입된 행의 높이와 열의 너비를 조정합니다.
+                // 96은 화면의 DPI(Dots Per Inch, 인치당 도트 수)
+                // Excel에서 셀의 높이는 포인트(point) 단위로 표시(1 포인트는 1/72 인치입니다)
+                personInfoRow.setHeightInPoints(newHeight*72/96); // 픽셀을 point로변경
+                // 8이란 값은, 엑셀에서 사용되는 기본 문자 폭의 값
+                // 엑셀에서는 한 개의 문자가 차지하는 너비를 1/256 단위로 계산
+                int columnWidth = (int) Math.floor(((float) newWidth / (float) 8) * 256);
+                sheet.setColumnWidth(0, columnWidth);
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
             personInfoRow.createCell(1).setCellValue(personInfo.getName());
             personInfoRow.createCell(2).setCellValue(personInfo.getEmail());
             personInfoRow.createCell(3).setCellValue(personInfo.getAddress());
@@ -105,34 +156,21 @@ public class ResumeController {
             row++;
 
             // 자기소개서 데이터 생성
-            Row personInfoRow = sheet.createRow(row);
-            personInfoRow.createCell(0).setCellValue(introduction.getIntroduction());
+            Row introductionRow = sheet.createRow(row);
+            Cell introductionCell = introductionRow.createCell(0);
+            introductionCell.setCellStyle(this.getWrapCellStyle());
+            introductionCell.setCellValue(new XSSFRichTextString(introduction.getIntroduction().replaceAll("\n", String.valueOf((char) 10))));
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void getWrapCellStyle() {
+    public XSSFCellStyle getWrapCellStyle() {
         // 엑셀에서 보기 좋게 자동 개행 설정
-        CellStyle wrapTextStyle = workbook.createCellStyle();
-        wrapTextStyle.setWrapText(true);
-
-        // 전체 셀에 셀 스타일 적용
-        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
-            Sheet sheet = workbook.getSheetAt(i);
-
-            for (int j = 0; j <= sheet.getLastRowNum(); j++) {
-                Row row = sheet.getRow(j);
-
-                if (row != null) {
-                    for (int k = 0; k < row.getLastCellNum(); k++) {
-                        Cell cell = row.getCell(k, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                        cell.setCellStyle(wrapTextStyle);
-                    }
-                }
-            }
-        }
+        XSSFCellStyle style = (XSSFCellStyle) workbook.createCellStyle();
+        style.setWrapText(true);
+        return style;
     }
 
     public void saveWorkbookToFile() {
