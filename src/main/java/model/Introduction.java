@@ -18,7 +18,7 @@ public class Introduction {
         return introduction;
     }
 
-    public void setIntroduction(String introduction) {
-        this.introduction = introduction;
+    public void addIntroduction(String introduction) {
+        this.introduction += introduction;
     }
 }
