@@ -8,6 +8,9 @@ public class PersonInfo {
     private String phoneNumber;
     private String birthDate;
 
+    public PersonInfo() {
+    }
+
     public PersonInfo(String photo, String name, String email, String address, String phoneNumber, String birthDate) {
         this.photo = photo;
         this.name = name;

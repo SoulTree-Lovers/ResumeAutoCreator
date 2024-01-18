@@ -3,10 +3,10 @@ package model;
 public class Career {
     private String companyName; // 근무처
     private String jobTitle; // 담당업무
-    private Integer employmentPeriod; // 근무기간
+    private String employmentPeriod; // 근무기간
     private Integer yearsAtCompany; // 근속연수
 
-    public Career(String companyName, String jobTitle, Integer employmentPeriod, Integer yearsAtCompany) {
+    public Career(String companyName, String jobTitle, String employmentPeriod, Integer yearsAtCompany) {
         this.companyName = companyName;
         this.jobTitle = jobTitle;
         this.employmentPeriod = employmentPeriod;
@@ -39,11 +39,11 @@ public class Career {
         this.jobTitle = jobTitle;
     }
 
-    public Integer getEmploymentPeriod() {
+    public String getEmploymentPeriod() {
         return employmentPeriod;
     }
 
-    public void setEmploymentPeriod(Integer employmentPeriod) {
+    public void setEmploymentPeriod(String employmentPeriod) {
         this.employmentPeriod = employmentPeriod;
     }
 
