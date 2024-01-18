@@ -1,5 +1,6 @@
 package view;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 import model.Career;
 import model.Education;
@@ -7,70 +8,77 @@ import model.Introduction;
 import model.PersonInfo;
 
 public class ResumeView {
-    private static Scanner scanner;
+    private Scanner scanner;
 
     public ResumeView() {
         this.scanner = new Scanner(System.in);
     }
 
-    public static PersonInfo inputPersonInfo() {
+    public void inputPersonInfo(PersonInfo personInfo) {
         System.out.println("<개인정보 입력>");
 
         System.out.print("이름을 입력하세요: ");
-        String name = scanner.nextLine();
+        personInfo.setName(scanner.nextLine());
         System.out.print("이메일 주소를 입력하세요: ");
-        String email = scanner.nextLine();
+        personInfo.setEmail(scanner.nextLine());
         System.out.print("집 주소를 입력하세요: ");
-        String address = scanner.nextLine();
+        personInfo.setAddress(scanner.nextLine());
         System.out.print("전화번호를 입력하세요: ");
-        String phoneNumber = scanner.nextLine();
+        personInfo.setPhoneNumber(scanner.nextLine());
         System.out.print("생년월일을 입력하세요: ");
-        String birthDate = scanner.nextLine();
+        personInfo.setBirthDate(scanner.nextLine());
         System.out.print("사진 링크 주소를 입력하세요: ");
-        String photo = scanner.nextLine();
-        return new PersonInfo(photo, name, email, address, phoneNumber, birthDate);
+        personInfo.setPhoto(scanner.nextLine());
     }
 
-    public static Education inputEducation() {
+    public void inputEducation(ArrayList<Education> educations) {
         System.out.println("<학력 정보 입력>");
 
-        System.out.print("학교명을 입력하세요: ");
-        String schoolName = scanner.nextLine();
-        System.out.print("전공을 입력하세요: ");
-        String major = scanner.nextLine();
-        System.out.print("졸업여부를 입력하세요: ");
-        String graduationStatus = scanner.nextLine();
-        System.out.print("졸업년도를 입력하세요: ");
-        String graduationYear = scanner.nextLine();
+        while (true) {
+            System.out.print("학교명을 입력하세요: (종료 시 'q' 입력)");
+            String schoolName = scanner.nextLine();
+            if (schoolName.equals("q")) {
+                break;
+            }
+            System.out.print("전공을 입력하세요: ");
+            String major = scanner.nextLine();
+            System.out.print("졸업여부를 입력하세요: ");
+            String graduationStatus = scanner.nextLine();
+            System.out.print("졸업년도를 입력하세요: ");
+            String graduationYear = scanner.nextLine();
 
-        return new Education(graduationYear, schoolName, major, graduationStatus);
+            educations.add(new Education(graduationYear, schoolName, major, graduationStatus));
+        }
     }
 
-    public static Career inputCareer() {
+    public void inputCareer(ArrayList<Career> careers) {
         System.out.println("<경력 정보 입력>");
 
-        System.out.print("회사명을 입력하세요: ");
-        String companyName = scanner.nextLine();
-        System.out.print("담당업무를 입력하세요: ");
-        String jobTitle = scanner.nextLine();
-        System.out.print("근무기간을 입력하세요: ");
-        Integer employmentPeriod = scanner.nextInt();
-        scanner.nextLine();
-        System.out.print("근속연수를 입력하세요: ");
-        Integer yearsAtCompany = scanner.nextInt();
-        scanner.nextLine();
+        while (true) {
+            System.out.print("회사명을 입력하세요: (종료 시 'q' 입력)");
+            String companyName = scanner.nextLine();
+            if (companyName.equals("q")) {
+                break;
+            }
+            System.out.print("담당업무를 입력하세요: ");
+            String jobTitle = scanner.nextLine();
+            System.out.print("근무기간을 입력하세요: ");
+            String employmentPeriod = scanner.nextLine();
+            System.out.print("근속연수를 입력하세요: ");
+            Integer yearsAtCompany = scanner.nextInt();
+            scanner.nextLine();
 
-        return new Career(companyName, jobTitle, employmentPeriod, yearsAtCompany);
+            careers.add(new Career(companyName, jobTitle, employmentPeriod, yearsAtCompany));
+        }
     }
 
-    public static Introduction inputIntroduction() {
+    public void inputIntroduction(Introduction introduction) {
         System.out.println("<자기소개서> (종료 시 엔터 키 입력)");
-        Introduction introduction = new Introduction();
 
         while (true) {
             String curr = scanner.nextLine();
 
-            if (curr.equals("\n")) {
+            if (curr.isEmpty()) {
                 System.out.println("자기소개서 입력을 종료합니다.");
                 break;
             }
@@ -78,7 +86,17 @@ public class ResumeView {
             introduction.addIntroduction(curr);
             introduction.addIntroduction("\n");
         }
+    }
 
-        return introduction;
+    public void printAll(PersonInfo personInfo, ArrayList<Education> educations, ArrayList<Career> careers, Introduction introduction) {
+        System.out.println("<현재 저장된 모든 모델 정보>");
+        System.out.println(personInfo);
+        for (Education education : educations) {
+            System.out.println(education);
+        }
+        for (Career career : careers) {
+            System.out.println(career);
+        }
+        System.out.println(introduction);
     }
 }
