@@ -1,12 +1,12 @@
 package model;
 
 public class Education {
-    private Integer graduationYear;
+    private String graduationYear;
     private String schoolName;
     private String major;
     private String graduationStatus;
 
-    public Education(Integer graduationYear, String schoolName, String major, String graduationStatus) {
+    public Education(String graduationYear, String schoolName, String major, String graduationStatus) {
         this.graduationYear = graduationYear;
         this.schoolName = schoolName;
         this.major = major;
@@ -23,11 +23,11 @@ public class Education {
                 '}';
     }
 
-    public Integer getGraduationYear() {
+    public String getGraduationYear() {
         return graduationYear;
     }
 
-    public void setGraduationYear(Integer graduationYear) {
+    public void setGraduationYear(String graduationYear) {
         this.graduationYear = graduationYear;
     }
 
