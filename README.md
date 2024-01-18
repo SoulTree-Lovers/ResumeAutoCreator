@@ -19,10 +19,12 @@
     - workPeriod
     - companyName
     - jobTitle
+    - yearsAtCompany
 - Education: 학력 정보를 저장
     - graduationYear
     - schoolName
     - major
+    - graduationStatus
 - PersonInfo: 개인 정보를 저장
     - photo
     - name
