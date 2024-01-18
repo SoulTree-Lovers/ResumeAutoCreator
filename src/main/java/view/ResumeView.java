@@ -7,13 +7,13 @@ import model.Introduction;
 import model.PersonInfo;
 
 public class ResumeView {
-    private Scanner scanner;
+    private static Scanner scanner;
 
     public ResumeView() {
         this.scanner = new Scanner(System.in);
     }
 
-    public PersonInfo inputPersonInfo() {
+    public static PersonInfo inputPersonInfo() {
         System.out.println("<개인정보 입력>");
 
         System.out.print("이름을 입력하세요: ");
@@ -31,7 +31,7 @@ public class ResumeView {
         return new PersonInfo(photo, name, email, address, phoneNumber, birthDate);
     }
 
-    public Education inputEducation() {
+    public static Education inputEducation() {
         System.out.println("<학력 정보 입력>");
 
         System.out.print("학교명을 입력하세요: ");
@@ -46,7 +46,7 @@ public class ResumeView {
         return new Education(graduationYear, schoolName, major, graduationStatus);
     }
 
-    public Career inputCareer() {
+    public static Career inputCareer() {
         System.out.println("<경력 정보 입력>");
 
         System.out.print("회사명을 입력하세요: ");
@@ -63,7 +63,7 @@ public class ResumeView {
         return new Career(companyName, jobTitle, employmentPeriod, yearsAtCompany);
     }
 
-    public Introduction inputIntroduction() {
+    public static Introduction inputIntroduction() {
         System.out.println("<자기소개서> (종료 시 엔터 키 입력)");
         Introduction introduction = new Introduction();
 
